@@ -1,9 +1,8 @@
 from flask import jsonify, request
 from database.models import User  
 from database.database import db  
-from utils.is_email import is_email_or_username
 from utils.hash_password import check_hashed_password
-
+from utils.is_email import is_email_or_username
 
 class Handlers:
     def __init__(self):
@@ -32,12 +31,12 @@ class Handlers:
                 'error': 'Failed to create user',
                 'message': str(e)
             }), 500
-    
+        
     def login_user(self):
         try:
             data = request.get_json()
 
-            username_or_email = data.get('username_or_email')
+            username_or_email = data.get('username')
             password = data.get('password')
             
             user = None
@@ -52,6 +51,7 @@ class Handlers:
                     'message': 'Invalid username or email'
                 }), 401
 
+            # Check if the hashed password matches the provided password
             if check_hashed_password(password, user.password):
                 return jsonify({
                     'message': 'Login successful',
@@ -73,7 +73,3 @@ class Handlers:
                 'error': 'An error occurred',
                 'message': str(e)
             }), 500
-        
-
-
-   
