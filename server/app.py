@@ -8,13 +8,11 @@ from config.config import Config
 def create_app():
     app = Flask(__name__)
     
-    # Ensure that the database URL is printed and loaded correctly
-    print("Database URL: ", Config.DATABASE_URL)
+
 
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URL
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    # Enable CORS
+    
     CORS(app)
 
     # Initialize the database

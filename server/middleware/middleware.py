@@ -1,2 +1,2 @@
-def cors_middlerware():
+class Middleware:
     pass
