@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from routes.routes import setup_routes  
 from database.database import db  
@@ -7,12 +6,10 @@ from config.config import Config
 
 def create_app():
     app = Flask(__name__)
-    
-
 
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URL
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+
     CORS(app)
 
     # Initialize the database

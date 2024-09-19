@@ -1,4 +1,5 @@
 from database.database import db
+from utils.hash_password import hash_user_password
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -15,4 +16,4 @@ class User(db.Model):
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
-        self.password = password
+        self.password = hash_user_password(password)
