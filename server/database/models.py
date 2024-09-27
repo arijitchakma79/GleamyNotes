@@ -25,12 +25,13 @@ class User(db.Model):
     # Token (e.g., refresh token or JWT storage)
     token = db.Column(db.String(255), nullable=True)
 
-    def __init__(self, username, email, first_name, last_name, password):
+    def __init__(self, username, email, first_name, last_name, password, token):
         self.username = username
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.password = hash_user_password(password)
+        self.token = token
 
     def mark_as_deleted(self):
         """Marks the user as deleted and sets the deletion date."""
