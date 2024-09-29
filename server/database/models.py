@@ -19,6 +19,7 @@ class User(db.Model):
 
     # User status flags
     isVerified = db.Column(db.Boolean, default=False, nullable=False)
+    verificationCode = db.Column(db.String(10), nullable=True)
     isDeleted = db.Column(db.Boolean, default=False, nullable=False)
     deletionDate = db.Column(db.DateTime(timezone=True), nullable=True)
 

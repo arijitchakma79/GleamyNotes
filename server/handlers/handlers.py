@@ -4,6 +4,7 @@ from database.database import db
 from utils.hash_password import check_hashed_password, hash_user_password
 from utils.is_email import is_email_or_username
 from utils.generateJWT import generate_jwt
+from utils.verification_email import send_verification_code, generate_verification_code
 
 class Handlers:
     def __init__(self):
@@ -124,3 +125,73 @@ class Handlers:
                 'error': 'An error occurred',
                 'message': str(e)
             }), 500
+        
+    def send_verification_code_email(self):
+        try:
+            # Get the email from the request
+            email = request.args.get('email')
+            if not email:
+                return jsonify({'error': 'Email is required'}), 400
+        
+            verification_code = generate_verification_code()
+
+            print(f"Generated verification code: {verification_code}")
+
+            send_verification_code(email, verification_code)
+
+            user = User.query.filter_by(email=email).first()
+
+            if user:
+                print(f"Updating user {user.email} with verification code {verification_code}")
+
+                user.verificationCode = verification_code
+
+                self.db.session.commit()
+
+                return jsonify({
+                    'message': 'Verification email sent successfully'
+                }), 200
+            else:
+                return jsonify({
+                    'error': 'User not found'
+                }), 404
+
+        except Exception as e:
+            self.db.session.rollback()
+            return jsonify({
+                'error': 'Failed to send verification email',
+                'message': str(e)
+            }), 500
+
+    def check_verification_code(self):
+        try:
+           
+            data = request.get_json()
+            email = request.args.get('email')
+            verification_code = data.get('verification_code')
+
+            if not email or not verification_code:
+                return jsonify({'error': 'Email and verification code are required'}), 400
+
+            user = User.query.filter_by(email=email).first()
+
+            if user and user.verificationCode == verification_code:
+                user.isVerified = True
+                self.db.session.commit()
+                return jsonify({
+                    'message': 'Verification successful'
+                }), 200
+            else:
+                return jsonify({
+                    'error': 'Invalid verification code'
+                }), 400
+
+        except Exception as e:
+            return jsonify({
+                'error': 'An error occurred',
+                'message': str(e)
+            }), 500
+
+
+
+        
