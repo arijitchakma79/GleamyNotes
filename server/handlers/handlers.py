@@ -11,28 +11,36 @@ class Handlers:
 
     def register_user(self):
         try:
-            # Get JSON data from request
             data = request.get_json()
+            
+            required_fields = ['username', 'email', 'first_name', 'last_name', 'password']
+            for field in required_fields:
+                if field not in data or not data[field]:
+                    return jsonify({
+                        'error': 'Missing required field',
+                        'message': f'{field} is required'
+                    }), 400
 
-            # Extract user data from the request
-            username = data.get('username')
-            email = data.get('email')
-            firstname = data.get('first_name')
-            lastname = data.get('last_name')
-            password = data.get('password')
+            username = data['username']
+            email = data['email']
+            firstname = data['first_name']
+            lastname = data['last_name']
+            password = data['password']
 
-            # Hash the password before storing it
-            hashed_password = hash_user_password(password)
+            # Check if username or email already exists
+            if User.query.filter((User.username == username) | (User.email == email)).first():
+                return jsonify({
+                    'error': 'User already exists',
+                    'message': 'Username or email is already in use'
+                }), 409
 
-            # Payload for the JWT
+            # Generate JWT token
             payload = {
                 'username': username,
                 'email': email,
                 'first_name': firstname,
                 'last_name': lastname
             }
-
-            # Generate JWT token
             token = generate_jwt(payload)
 
             # Create a new User object
@@ -41,7 +49,7 @@ class Handlers:
                 email=email,
                 first_name=firstname,
                 last_name=lastname,
-                password=hashed_password,
+                password=password,  
                 token=token
             )
 
@@ -61,7 +69,7 @@ class Handlers:
                 'error': 'Failed to create user',
                 'message': str(e)
             }), 500
-
+        
     def login_user(self):
         try:
             # Get JSON data from request
@@ -69,7 +77,6 @@ class Handlers:
 
             username_or_email = data.get('username')
             password = data.get('password')
-
             user = None
 
             # Check if it's an email or a username
