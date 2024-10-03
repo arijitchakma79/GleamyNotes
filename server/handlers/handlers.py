@@ -135,14 +135,13 @@ class Handlers:
         
             verification_code = generate_verification_code()
 
-            print(f"Generated verification code: {verification_code}")
+           
 
             send_verification_code(email, verification_code)
 
             user = User.query.filter_by(email=email).first()
 
             if user:
-                print(f"Updating user {user.email} with verification code {verification_code}")
 
                 user.verificationCode = verification_code
 
@@ -191,7 +190,39 @@ class Handlers:
                 'error': 'An error occurred',
                 'message': str(e)
             }), 500
-
-
-
         
+    def reset_password(self):
+        try:
+
+            data = request.get_json()
+            
+            email = data.get('email') 
+            password = data.get('password') 
+            confirm_password = data.get('confirm_password')  
+            
+            print(f"Email: {email}, Password: {password}, Confirm Password: {confirm_password}")
+
+            if password != confirm_password:
+                return jsonify({'error': 'Passwords do not match'}), 400
+
+            if not email or not password:
+                return jsonify({'error': 'Email and password are required'}), 400
+
+            user = User.query.filter_by(email=email).first()
+
+            if user:
+                user.password = hash_user_password(password)
+                self.db.session.commit()
+                return jsonify({
+                    'message': 'Password changed successfully'
+                }), 200
+            else:
+                return jsonify({
+                    'error': 'User not found'
+                }), 404
+
+        except Exception as e:
+            return jsonify({
+                'error': 'An error occurred',
+                'message': str(e)
+            }), 500
