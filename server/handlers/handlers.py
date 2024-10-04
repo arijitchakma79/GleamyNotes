@@ -14,7 +14,7 @@ class Handlers:
         try:
             data = request.get_json()
             
-            required_fields = ['username', 'email', 'first_name', 'last_name', 'password']
+            required_fields = ['username', 'email', 'firstname', 'lastname', 'password']
             for field in required_fields:
                 if field not in data or not data[field]:
                     return jsonify({
@@ -24,9 +24,10 @@ class Handlers:
 
             username = data['username']
             email = data['email']
-            firstname = data['first_name']
-            lastname = data['last_name']
+            firstname = data['firstname']
+            lastname = data['lastname']
             password = data['password']
+            print(data)
 
             # Check if username or email already exists
             if User.query.filter((User.username == username) | (User.email == email)).first():
@@ -60,7 +61,13 @@ class Handlers:
 
             return jsonify({
                 'message': 'User created successfully',
-                'token': token
+                'token': token,
+                'user': {
+                    'username': username,
+                    'email': email,
+                    'first_name': firstname,
+                    'last_name': lastname
+                }
             }), 201
 
         except Exception as e:
