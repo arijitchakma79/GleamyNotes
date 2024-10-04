@@ -76,7 +76,7 @@ class Handlers:
             # Get JSON data from request
             data = request.get_json()
 
-            username_or_email = data.get('username')
+            username_or_email = data.get('email')
             password = data.get('password')
             user = None
 
