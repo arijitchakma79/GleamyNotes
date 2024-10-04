@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { setUser, setLoading, setError } from '../store/slices';
+import { setUser, setLoading, setError } from '../store/userActions';
 import { LoginResponse } from '../types/login';
 
 const Login: React.FC = () => {

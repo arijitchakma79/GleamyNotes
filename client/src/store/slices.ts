@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createReducer } from '@reduxjs/toolkit';
 import { UserState, User } from '../types/user';
+import { setUser, logout, setLoading, setError, setVerified } from './userActions';
 
 const initialState: UserState = {
     user: null,
@@ -8,33 +9,28 @@ const initialState: UserState = {
     error: null,
 };
 
-const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        setUser(state, action: PayloadAction<User>){
+const userReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(setUser, (state, action)=> {
             state.user = action.payload;
             state.loading = false;
             state.error = null;
-        },
-        logout(state) {
+        })
+        .addCase(logout, (state) => {
             state.user = null;
             state.loading = false;
             state.error = null;
-        },
-        setLoading(state, action: PayloadAction<boolean>){
+        })
+        .addCase(setLoading, (state, action) => {
             state.loading = action.payload;
-        },
-        setVerified(state, action: PayloadAction<boolean>){
-            state.verified = action.payload;
-        },
-        setError(state, action: PayloadAction<string | null>){
+        })
+        .addCase(setError, (state, action)=>{
             state.error = action.payload;
             state.loading = false;
-        },
-    }
+        })
+        .addCase(setVerified, (state, action)=>{
+            state.verified = action.payload;
+        })
 })
 
-
-export const { setUser, logout, setLoading, setVerified, setError } = userSlice.actions;
-export default userSlice.reducer;
+export default userReducer;
