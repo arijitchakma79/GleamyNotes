@@ -1,37 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { setUser, setError, setLoading } from "../store/userActions";
-import { login } from "../api/userApi";
+import { RootState, AppDispatch } from "../store";
+import { loginUser } from '../store/slices'; 
+import { useNavigate } from "react-router-dom";
 import { TextField, Button, CircularProgress, Typography, Box, Alert, Checkbox, FormControlLabel, Link } from '@mui/material';
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { loading, error, authenticated } = useSelector((state: RootState) => state.user); 
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(setLoading(true));
-    try {
-      const data = await login(email, password);
-      dispatch(setUser(data.user));
-      
-      if (rememberMe) {
-        localStorage.setItem('token', data.token);
-      } else {
-        sessionStorage.setItem('token', data.token);
-      }
-      console.log(data)
-    } catch (err: any) {
-      dispatch(setError('Invalid email or password'));
-    } finally {
-      dispatch(setLoading(false));
-    }
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault(); 
+    dispatch(loginUser({ email, password }));
   };
+
+  useEffect(() => {
+    if (authenticated) {
+      navigate('/protected/dashboard');
+    }
+  }, [authenticated, navigate]);
 
   return (
     <Box

@@ -6,3 +6,4 @@ export const logout = createAction('user/logout');
 export const setLoading = createAction<boolean>('user/setLoading');
 export const setVerified = createAction<boolean>('user/setVerified');
 export const setError = createAction<string | null>('user/setError');
+export const setAuthenticated = createAction<boolean>('user/setAuthenticated');

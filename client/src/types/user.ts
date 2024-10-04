@@ -3,6 +3,7 @@ export interface UserState {
     loading: boolean;
     verified: boolean;
     error: string | null;
+    authenticated: boolean;
 }
 
 export interface User {

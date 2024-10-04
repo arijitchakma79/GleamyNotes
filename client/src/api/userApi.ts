@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { User } from '../types/user';
 import { LoginResponse, SignUpResponse } from '../types/auth';
 
 export const login = async (email: string, password: string) : Promise<LoginResponse> => {
