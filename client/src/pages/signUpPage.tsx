@@ -3,7 +3,7 @@ import { signup } from "../api/userApi";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { setError, setLoading, setUser } from "../store/userActions";
-import { TextField, Button, CircularProgress, Typography, Box, Alert } from "@mui/material";
+import { TextField, Button, CircularProgress, Typography, Box, Alert, Link} from "@mui/material";
 import { emailRegex, usernameRegex, nameRegex, passwordRegex } from "../utils/regex";
 
 const SignUpPage: React.FC = () => {
@@ -70,8 +70,8 @@ const SignUpPage: React.FC = () => {
         padding: 2,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Sign Up
+      <Typography variant="body1">
+        Welcome to GleamyNotes, create an account to proceed.
       </Typography>
 
       {error && <Alert severity="error">{error}</Alert>}
@@ -140,6 +140,14 @@ const SignUpPage: React.FC = () => {
         >
           {loading ? <CircularProgress size={24} /> : 'Sign Up'}
         </Button>
+        <Box sx={{ marginTop: 2, textAlign: 'center' }}>
+          <Typography variant="body2">
+            Already have an account?{' '}
+            <Link href="/login" underline="hover">
+              Log In 
+            </Link>
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

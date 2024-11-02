@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store";
-import { loginUser } from '../store/slices'; 
-import { useNavigate } from "react-router-dom";
-import { TextField, Button, CircularProgress, Typography, Box, Alert, Checkbox, FormControlLabel, Link } from '@mui/material';
+import { loginUser } from '../store/slices';
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { 
+  TextField, 
+  Button, 
+  CircularProgress, 
+  Typography, 
+  Box, 
+  Alert, 
+  Checkbox, 
+  FormControlLabel, 
+  Link
+} from '@mui/material';
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error, authenticated } = useSelector((state: RootState) => state.user); 
-
+  const { loading, error, authenticated } = useSelector((state: RootState) => state.user);
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     dispatch(loginUser({ email, password }));
   };
 
@@ -37,7 +47,7 @@ const LoginPage: React.FC = () => {
       }}
     >
       <Typography variant="body1">
-        Welcome to GleamyNotes, please login to continue
+        Welcome back user, please login to continue
       </Typography>
 
       {error && <Alert severity="error">{error}</Alert>}
@@ -61,7 +71,12 @@ const LoginPage: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          width: '100%' 
+        }}>
           <FormControlLabel
             control={
               <Checkbox
@@ -72,6 +87,14 @@ const LoginPage: React.FC = () => {
             }
             label="Remember Me"
           />
+          <Link
+            component={RouterLink}
+            to="/forgot-password"
+            variant="body2"
+            sx={{ textDecoration: 'none' }}
+          >
+            Forgot Password?
+          </Link>
         </Box>
 
         <Button
@@ -88,7 +111,7 @@ const LoginPage: React.FC = () => {
         <Box sx={{ marginTop: 2, textAlign: 'center' }}>
           <Typography variant="body2">
             Don't have an account?{' '}
-            <Link href="/signup" underline="hover">
+            <Link component={RouterLink} to="/signup" underline="hover">
               Sign Up
             </Link>
           </Typography>
