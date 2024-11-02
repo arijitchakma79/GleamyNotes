@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { signup } from "../api/userApi";
+import { useNavigate } from "react-router-dom";
+import { signup } from "../api/authApi";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { setError, setLoading, setUser } from "../store/userActions";
@@ -8,6 +9,7 @@ import { emailRegex, usernameRegex, nameRegex, passwordRegex } from "../utils/re
 
 const SignUpPage: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.user);
 
   const [email, setEmail] = useState('');
@@ -56,6 +58,7 @@ const SignUpPage: React.FC = () => {
       dispatch(setError('Invalid email or password'));
     } finally {
       dispatch(setLoading(false));
+      navigate('/verification');
     }
   };
 

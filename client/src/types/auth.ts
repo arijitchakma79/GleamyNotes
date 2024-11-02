@@ -11,3 +11,7 @@ export interface SignUpResponse{
     token: string;
     user: User;
 }
+
+export interface SendVerificationEmail{
+    message: string
+}

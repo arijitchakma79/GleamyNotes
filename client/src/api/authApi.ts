@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginResponse, SignUpResponse } from '../types/auth';
+import { LoginResponse, SignUpResponse, SendVerificationEmail} from '../types/auth';
 
 export const login = async (email: string, password: string) : Promise<LoginResponse> => {
     const response = await axios.post<LoginResponse>('http://127.0.0.1:5000/login',{
@@ -17,5 +17,10 @@ export const signup = async(email: string, username: string, firstname: string, 
         lastname,
         password
     });
+    return response.data;
+}
+
+export const send_verification_email = async (email: string): Promise<void> => {
+    const response = await axios.get(`http://127.0.0.5000/send_verification_email?email=${encodeURIComponent(email)}`);
     return response.data;
 }
