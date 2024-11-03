@@ -1,0 +1,48 @@
+.sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: 100%;
+    background-color: white;
+    border-right: 1px solid #e0e0e0;
+    transition: width 0.3s;
+    overflow: hidden;
+    z-index: 1000;
+  }
+  
+  .sidebar.closed {
+    width: 0;
+  }
+  
+  .sidebar.open {
+    width: 250px;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
+  
+  .add-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .project-list {
+    padding: 0 16px;
+  }
+  
+  .project-item {
+    padding: 8px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .project-item:hover {
+    background-color: #f5f5f5;
+  }
+  
