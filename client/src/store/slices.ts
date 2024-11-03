@@ -1,14 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { login as loginApi, signup as signupApi } from '../api/authApi'; 
+import { login as loginApi, signup as signupApi} from '../api/authApi';
+import {verify_email} from '../services/checkEmailVerification'; 
 import { UserState } from '../types/user'; 
 
 
 const initialState: UserState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem('user') || 'null'),
   loading: false,
   error: null,
-  verified: false,
-  authenticated: false,
+  verified: localStorage.getItem('verified') === 'true',
+  authenticated: localStorage.getItem('isAuthenticated') === 'true',
 };
 
 export const loginUser = createAsyncThunk(
@@ -17,6 +18,8 @@ export const loginUser = createAsyncThunk(
     try {
       const userData = await loginApi(credentials.email, credentials.password);
       localStorage.setItem('token', userData.token); 
+      localStorage.setItem('username', userData.user.username);
+      localStorage.setItem('isAuthenticated', 'true');
       console.log(userData)
       return userData.user;
     } catch (error: any) {
@@ -38,10 +41,31 @@ export const signupUser = createAsyncThunk(
   }
 );
 
-export const logoutUser = createAsyncThunk('user/logout', async (_, { dispatch }) => {
-  localStorage.removeItem('token'); 
-  return null; 
-});
+export const logoutUser = createAsyncThunk('user/logout', async () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('isAuthenticated');
+  localStorage.removeItem('verified');
+  return null;
+})
+
+export const verifyUser = createAsyncThunk(
+  'user/verify_email',
+  async (user_info: { email: string; code: string }, { rejectWithValue }) => {
+    try {
+      const isVerified = await verify_email(user_info.email, user_info.code);
+      if (isVerified) {
+        localStorage.setItem('isAuthenticated', 'true');
+        return true; 
+      } else {
+        return rejectWithValue('Verification failed. Please check your code.');
+      }
+    } catch (error: any) {
+      return rejectWithValue('An error occurred during email verification.');
+    }
+  }
+);
+
 
 
 const authSlice = createSlice({
@@ -99,6 +123,24 @@ const authSlice = createSlice({
       state.authenticated = false;
       state.loading = false;
     });
+
+    // Verify User Reducer
+  builder
+  .addCase(verifyUser.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+  })
+  .addCase(verifyUser.fulfilled, (state) => {
+    state.loading = false;
+    state.verified = true; 
+    state.error = null;
+    state.authenticated = true;
+  })
+  .addCase(verifyUser.rejected, (state, action) => {
+    state.loading = false;
+    state.verified = false;
+    state.error = action.payload as string;
+  });
   },
 });
 

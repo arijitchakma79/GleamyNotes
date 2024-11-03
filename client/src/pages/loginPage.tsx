@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (authenticated) {
-      navigate('/protected/dashboard');
+      navigate(`/protected/dashboard?email=${encodeURIComponent(email)}`);
     }
   }, [authenticated, navigate]);
 

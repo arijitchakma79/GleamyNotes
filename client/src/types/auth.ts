@@ -15,3 +15,8 @@ export interface SignUpResponse{
 export interface SendVerificationEmail{
     message: string
 }
+
+export interface VerificationResponse {
+    message?: string;        // Present when verification is successful
+    error?: string;          // Present when an error occurs or the verification fails
+}

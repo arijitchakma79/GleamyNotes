@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../api/authApi";
+import { signup, send_verification_email } from "../api/authApi";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { setError, setLoading, setUser } from "../store/userActions";
-import { TextField, Button, CircularProgress, Typography, Box, Alert, Link} from "@mui/material";
+import { TextField, Button, CircularProgress, Typography, Box, Alert, Link } from "@mui/material";
 import { emailRegex, usernameRegex, nameRegex, passwordRegex } from "../utils/regex";
 
 const SignUpPage: React.FC = () => {
@@ -19,7 +19,7 @@ const SignUpPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [inputError, setInputError] = useState(''); 
+  const [inputError, setInputError] = useState('');
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,25 +40,30 @@ const SignUpPage: React.FC = () => {
       setInputError('Password must contain at least 8 characters, including uppercase, lowercase, number, and special character');
       return;
     }
-
     if (password !== confirmedPassword) {
       setPasswordError('Passwords do not match');
       return;
     }
 
     setPasswordError('');
-    setInputError(''); 
+    setInputError('');
     dispatch(setLoading(true));
 
     try {
       const data = await signup(email, username, firstname, lastname, password);
       dispatch(setUser(data.user));
       localStorage.setItem('token', data.token);
+
+      // Send verification email
+      await send_verification_email(email);
+
+      // Navigate to verification page after email is sent
+      navigate(`/verification?email=${encodeURIComponent(email)}`);
     } catch (err: any) {
-      dispatch(setError('Invalid email or password'));
+      const errorMessage = err.response?.data?.error || 'An error occurred during signup';
+      dispatch(setError(errorMessage));
     } finally {
       dispatch(setLoading(false));
-      navigate('/verification');
     }
   };
 
@@ -147,7 +152,7 @@ const SignUpPage: React.FC = () => {
           <Typography variant="body2">
             Already have an account?{' '}
             <Link href="/login" underline="hover">
-              Log In 
+              Log In
             </Link>
           </Typography>
         </Box>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { SignUpPage, LoginPage, Dashboard, VerifyPage, ForgotPasswordPage} from './pages';
+import { SignUpPage, LoginPage, Dashboard, EmailVerificationPage, ForgotPasswordPage} from './pages';
 import ProtectedRoute from './components/protected';
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path='forgot-password' element={<ForgotPasswordPage/>} />
-          <Route path="/verification" element={<VerifyPage />} />
+          <Route path="/verification" element={<EmailVerificationPage />} />
 
           {/* Protected route */}
           <Route

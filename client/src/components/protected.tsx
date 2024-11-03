@@ -8,10 +8,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { authenticated } = useSelector((state: RootState) => state.user);
+  const { authenticated, verified } = useSelector((state: RootState) => state.user);
 
-  if (!authenticated) {
-    console.log("Not authenticated")
+  if (!authenticated && !verified) {
+    console.log("Not authenticated or verified")
     return <Navigate to="/login" />;
   }
 
