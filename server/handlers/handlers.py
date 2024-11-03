@@ -135,8 +135,8 @@ class Handlers:
         
     def send_verification_code_email(self):
         try:
-            # Get the email from the request
-            email = request.args.get('email')
+            data = request.get_json()
+            email = data.get('email')
             if not email:
                 return jsonify({'error': 'Email is required'}), 400
         
@@ -173,15 +173,15 @@ class Handlers:
         try:
            
             data = request.get_json()
-            email = request.args.get('email')
-            verification_code = data.get('verification_code')
+            code = data.get('code')
+            email = data.get('email')
 
-            if not email or not verification_code:
+            if not email or not code:
                 return jsonify({'error': 'Email and verification code are required'}), 400
 
             user = User.query.filter_by(email=email).first()
 
-            if user and user.verificationCode == verification_code:
+            if user and user.verificationCode == code:
                 user.isVerified = True
                 self.db.session.commit()
                 return jsonify({
@@ -197,6 +197,28 @@ class Handlers:
                 'error': 'An error occurred',
                 'message': str(e)
             }), 500
+
+    def check_user_is_verified(self):
+        try:
+            data = request.get_json()
+            email = data.get('email')
+
+            if not email:
+                return jsonify({'error': 'Email is required'}), 400
+            
+            user = User.query.filter_by(email=email).first()
+
+            if user:
+                if user.isVerified:
+                    return jsonify({'message': 'User is verified'}), 200
+                else:
+                    return jsonify({'error': 'User is not verified'}), 400
+            else:
+                return jsonify({'error': 'User not found'}), 404
+
+        except Exception as e:
+            return jsonify({'error': 'An error occurred', 'message': str(e)}), 500
+
         
     def reset_password(self):
         try:
